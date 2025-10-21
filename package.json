@@ -1,0 +1,58 @@
+{
+  "name": "@coreui/coreui-free-vue-admin-template",
+  "version": "5.0.0-rc.0",
+  "description": "CoreUI Free Vue Admin Template",
+  "bugs": {
+    "url": "https://github.com/coreui/coreui-free-vue-admin-template/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:coreui/coreui-free-vue-admin-template.git"
+  },
+  "license": "MIT",
+  "author": "The CoreUI Team (https://github.com/orgs/coreui/people)",
+  "scripts": {
+    "dev": "vite --force",
+    "build": "vite build",
+    "lint": "eslint \"src/**/*.{js,vue}\"",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@coreui/chartjs": "^4.0.0-rc.0",
+    "@coreui/coreui": "^5.0.0-rc.1",
+    "@coreui/icons": "^3.0.1",
+    "@coreui/icons-vue": "^2.0.0",
+    "@coreui/utils": "^2.0.2",
+    "@coreui/vue": "^5.0.0-rc.1",
+    "@coreui/vue-chartjs": "^3.0.0-rc.0",
+    "@fortawesome/fontawesome-svg-core": "^6.5.1",
+    "@fortawesome/free-solid-svg-icons": "^6.5.1",
+    "@fortawesome/vue-fontawesome": "^3.0.6",
+    "@popperjs/core": "^2.11.8",
+    "@vuelidate/core": "^2.0.3",
+    "@vuelidate/validators": "^2.0.4",
+    "@vuepic/vue-datepicker": "^8.1.0",
+    "axios": "^1.6.8",
+    "chart.js": "^4.4.1",
+    "simplebar-vue": "^2.3.3",
+    "v-calendar": "^3.1.2",
+    "vue": "^3.4.3",
+    "vue-awesome-paginate": "^1.1.46",
+    "vue-multiselect": "^3.0.0-beta.3",
+    "vue-router": "^4.2.5",
+    "vue-select": "^4.0.0-beta.6",
+    "vuetify": "^3.7.6",
+    "vuex": "^4.1.0",
+    "vuex-persistedstate": "^4.1.0",
+    "yarn": "^1.22.22"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^5.0.2",
+    "autoprefixer": "^10.4.16",
+    "eslint": "^8.56.0",
+    "eslint-plugin-vue": "^9.19.2",
+    "postcss": "^8.4.32",
+    "sass": "^1.69.6",
+    "vite": "^5.0.10"
+  }
+}
