@@ -29,7 +29,11 @@
             <CTableHeaderCell>Código Zeus</CTableHeaderCell>
             <CTableHeaderCell>Nombre Zeus</CTableHeaderCell>
 
-            <CTableHeaderCell v-for="col in diaColumns" :key="col" class="text-center">
+            <CTableHeaderCell
+              v-for="col in diaColumns"
+              :key="col"
+              class="text-center"
+            >
               {{ col.replace('dia_', 'Día ').replace('_', ' ') }}
             </CTableHeaderCell>
 
@@ -39,11 +43,17 @@
 
         <CTableBody>
           <CTableRow v-for="row in filteredData" :key="row.device_id">
-            <CTableDataCell @click="getReportClient(row)">{{ row.client_name }}</CTableDataCell>
+            <CTableDataCell @click="getReportClient(row)">
+              {{ row.client_name }}
+            </CTableDataCell>
             <CTableDataCell>{{ row.zeusCode }}</CTableDataCell>
             <CTableDataCell>{{ row.zeusName }}</CTableDataCell>
 
-            <CTableDataCell v-for="col in diaColumns" :key="col" class="text-center">
+            <CTableDataCell
+              v-for="col in diaColumns"
+              :key="col"
+              class="text-center"
+            >
               {{ row[col] }}
             </CTableDataCell>
 
@@ -51,96 +61,96 @@
           </CTableRow>
         </CTableBody>
       </CTable>
-
-
-      <ViewLastMonthModal
-        :showModal="showModal"
-        :zeusCode="zeusCode"
-        @closeViewModal="closeShowModal"
-      />
     </template>
+
+    <!-- Modal -->
+    <ViewLastMonthModal
+      
+      :showModal="showModal"
+      :zeusCode="zeusCode"
+      @closeViewModal="closeShowModal"
+    />
   </div>
 </template>
 
-<script>
+<script setup>
+import { ref, onMounted } from 'vue'
 import axios from 'axios'
-import ViewLastMonthModal from '../../components/ViewLastMonth.vue';
+import { useStore } from 'vuex'
+import ViewLastMonthModal from '../../components/ViewLastMonth.vue'
 
-export default {
-  name: 'DeviceStatus',
+// store de Vuex
+const store = useStore()
 
-  components: {
-    ViewLastMonthModal,
-  },
-  data() {
-    return {
-      isLoading: false,
-      showModal: false,
-      selectedEstado: null,
-      estadoOptions: [
-        { label: 'Todos', value: null },
-        { label: 'En Zeus', value: '2' },
-        { label: 'En DGA', value: '3' },
-      ],
-      rawData: [],
-      filteredData: [],
-      diaColumns: [
-        'dia_11_oct',
-        'dia_12_oct',
-        'dia_13_oct',
-        'dia_14_oct',
-        'dia_15_oct',
-        'dia_16_oct',
-        'dia_17_oct',
-        'dia_18_oct',
-        'dia_19_oct',
-        'dia_20_oct',
-        'dia_21_oct',
-        'dia_22_oct',
-      ],
-      zeusCode: '',
-    }
-  },
-  mounted() {
-    this.fetchData()
-  },
-  methods: {
-    async fetchData(stepValue = this.selectedEstado) {
-      console.log(stepValue);
-      if (stepValue === 'Todos') stepValue = null;
-        this.isLoading = true
-        try {
-          const response = await axios.get(
-            this.$store.state.backendUrl + '/tasks-resume',
-            {
-              headers: {
-                'Content-Type': 'application/json',
-                Authorization: 'Bearer ' + this.$store.state.token,
-              },
-              params: {
-                step: stepValue
-              },
-            }
-          )
+// Estados reactivos
+const isLoading = ref(false)
+const showModal = ref(false)
+const selectedEstado = ref(null)
+const rawData = ref([])
+const filteredData = ref([])
+const zeusCode = ref('')
 
-          this.rawData = response.data
-          console.log(this.rawData)
-          this.filteredData = this.rawData    
-          this.isLoading = false
-        } catch (error) {
-          console.error('Error al obtener datos:', error)
-          this.isLoading = false
-        }
-    },
+// Opciones de filtro
+const estadoOptions = [
+  { label: 'Todos', value: null },
+  { label: 'En Zeus', value: '2' },
+  { label: 'En DGA', value: '3' },
+]
 
-    async getReportClient(client) {
-      this.showModal = true;
-      this.zeusCode = client.zeusCode ? client.zeusCode : null; 
-    },
+// Columnas dinámicas
+const diaColumns = [
+  'dia_11_oct',
+  'dia_12_oct',
+  'dia_13_oct',
+  'dia_14_oct',
+  'dia_15_oct',
+  'dia_16_oct',
+  'dia_17_oct',
+  'dia_18_oct',
+  'dia_19_oct',
+  'dia_20_oct',
+  'dia_21_oct',
+  'dia_22_oct',
+]
 
-    closeShowModal () {
-      this.showModal = false; 
-    }
-  },
+// 🔹 Obtener datos del backend
+const fetchData = async (stepValue = selectedEstado.value) => {
+  console.log('Filtro seleccionado:', stepValue)
+  if (stepValue === 'Todos') stepValue = null
+
+  isLoading.value = true
+  try {
+    const response = await axios.get(`${store.state.backendUrl}/tasks-resume`, {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: 'Bearer ' + store.state.token,
+      },
+      params: { step: stepValue },
+    })
+
+    rawData.value = response.data
+    filteredData.value = response.data
+  } catch (error) {
+    console.error('Error al obtener datos:', error)
+  } finally {
+    isLoading.value = false
+  }
 }
+
+// 🔹 Abrir modal al hacer clic en un cliente
+const getReportClient = (client) => {
+  console.log('Cliente seleccionado:', client)
+  zeusCode.value = client.zeusCode || null
+  showModal.value = true
+}
+
+// 🔹 Cerrar modal
+const closeShowModal = () => {
+  showModal.value = false
+}
+
+// 🔹 Cargar datos al montar el componente
+onMounted(() => {
+  fetchData()
+})
 </script>
