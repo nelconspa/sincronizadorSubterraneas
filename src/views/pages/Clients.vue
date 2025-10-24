@@ -106,6 +106,7 @@
             }
             
         },
+
         computed: {
             filteredClients() {
                 let filterClients = this.clients; 

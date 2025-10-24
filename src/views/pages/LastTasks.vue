@@ -39,7 +39,7 @@
 
         <CTableBody>
           <CTableRow v-for="row in filteredData" :key="row.device_id">
-            <CTableDataCell>{{ row.client_name }}</CTableDataCell>
+            <CTableDataCell @click="getReportClient(row)">{{ row.client_name }}</CTableDataCell>
             <CTableDataCell>{{ row.zeusCode }}</CTableDataCell>
             <CTableDataCell>{{ row.zeusName }}</CTableDataCell>
 
@@ -51,18 +51,31 @@
           </CTableRow>
         </CTableBody>
       </CTable>
+
+
+      <ViewLastMonthModal
+        :showModal="showModal"
+        :zeusCode="zeusCode"
+        @closeViewModal="closeShowModal"
+      />
     </template>
   </div>
 </template>
 
 <script>
 import axios from 'axios'
+import ViewLastMonthModal from '../../components/ViewLastMonth.vue';
 
 export default {
   name: 'DeviceStatus',
+
+  components: {
+    ViewLastMonthModal,
+  },
   data() {
     return {
       isLoading: false,
+      showModal: false,
       selectedEstado: null,
       estadoOptions: [
         { label: 'Todos', value: null },
@@ -85,6 +98,7 @@ export default {
         'dia_21_oct',
         'dia_22_oct',
       ],
+      zeusCode: '',
     }
   },
   mounted() {
@@ -92,32 +106,41 @@ export default {
   },
   methods: {
     async fetchData(stepValue = this.selectedEstado) {
-    console.log(stepValue);
-    if (stepValue === 'Todos') stepValue = null;
-      this.isLoading = true
-      try {
-        const response = await axios.get(
-          this.$store.state.backendUrl + '/tasks-resume',
-          {
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: 'Bearer ' + this.$store.state.token,
-            },
-            params: {
-              step: stepValue
-            },
-          }
-        )
+      console.log(stepValue);
+      if (stepValue === 'Todos') stepValue = null;
+        this.isLoading = true
+        try {
+          const response = await axios.get(
+            this.$store.state.backendUrl + '/tasks-resume',
+            {
+              headers: {
+                'Content-Type': 'application/json',
+                Authorization: 'Bearer ' + this.$store.state.token,
+              },
+              params: {
+                step: stepValue
+              },
+            }
+          )
 
-        this.rawData = response.data
-        console.log(this.rawData)
-        this.filteredData = this.rawData    
-        this.isLoading = false
-      } catch (error) {
-        console.error('Error al obtener datos:', error)
-        this.isLoading = false
-      }
+          this.rawData = response.data
+          console.log(this.rawData)
+          this.filteredData = this.rawData    
+          this.isLoading = false
+        } catch (error) {
+          console.error('Error al obtener datos:', error)
+          this.isLoading = false
+        }
     },
+
+    async getReportClient(client) {
+      this.showModal = true;
+      this.zeusCode = client.zeusCode ? client.zeusCode : null; 
+    },
+
+    closeShowModal () {
+      this.showModal = false; 
+    }
   },
 }
 </script>
